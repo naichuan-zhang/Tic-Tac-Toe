@@ -1,5 +1,7 @@
 <?php
-
+    /** 
+    *    Author     : Naichuan Zhang
+    */
     $wsdl = "http://localhost:8080/TTTWebApplication/TTTWebService?WSDL";
 
     try {

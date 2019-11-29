@@ -1,5 +1,7 @@
 <?php
-
+    /** 
+    *    Author     : Naichuan Zhang
+    */
     require 'soap.php';
     
     $xml_array['gid'] = $_POST['gid'];

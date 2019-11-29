@@ -4,6 +4,8 @@
 To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
+
+    @author:    Naichuan Zhang
 -->
 <html>
     <head>
@@ -136,6 +138,7 @@ and open the template in the editor.
                             } else if (isTurn === "false") {
                                 disableButtons();
                             }
+                            
                             checkWin();
                         }
                     }
@@ -154,29 +157,71 @@ and open the template in the editor.
                         
                         console.log(win);
                         if (win === "1") {
-                            alert("RESULT: Player 1 won the game!!!");
                             clearTimeout(playTimeout);
                             clearTimeout(checkWinTimeout);
                             disableButtons();
+                            setGameStatus(1);
+                            showResult("1");
+                            
                         } else if (win === "2") {
-                            alert("RESULT: Player 2 won the game!!!");
                             clearTimeout(playTimeout);
                             clearTimeout(checkWinTimeout);
                             disableButtons();
+                            setGameStatus(2);
+                            showResult("2");
                             
                         } else if (win === "3") {
-                            alert("RESULT: Draw!!!");
-                            clearTimeout(checkplay);
+                            clearTimeout(playTimeout);
                             clearTimeout(checkWinTimeout);
                             disableButtons();
+                            setGameStatus(3);
+                            showResult("3");
                             
                         } else {
                             $("#checkWin").html(win);
+                            checkWinTimeout = setTimeout("checkWin()", 2000);
                         }
                     }
                 });
                 
-                checkWinTimeout = setTimeout("checkWin()", 2000);
+            }
+            
+            function setGameStatus(status) {
+                console.log(status);
+                
+                $.ajax({
+                    type: 'POST',
+                    url: 'set_status.php',
+                    data: {gid: gid, status: status},
+                    success: function(msg) {
+                        if (msg === "1") {
+                            console.log("Set status successfully!");
+                        } else {
+                            console.log(msg);
+                        }
+                    }
+                });
+            }
+            
+            function showResult(result) {
+                console.log("Show alert!!" + result);
+                if (result === "1") {
+                    console.log("1231");
+                    $("#show").text("RESULT: Player 1 won the game!!!");
+                    //windows.alert("RESULT: Player 1 won the game!!!");
+                } else if (result === "2") {
+                    
+                    console.log("231");        
+                    
+                    $("#show").text("RESULT: Player 2 won the game!!!");
+                    //windows.alert("RESULT: Player 2 won the game!!!");
+                } else if (result === "3") {
+                    
+                    console.log("31231");
+                    
+                    $("#show").text("RESULT: Draw!!!");
+                    //windows.alert("RESULT: Draw!!!");
+                }
             }
             
             function disableButtons() {
@@ -216,6 +261,7 @@ and open the template in the editor.
             <div id="makeMove"></div>
             <div id="checkWin"></div>
             <div id="checkSquare"></div>
+            <div id="showResult"></div>
         </div>
         <?php 
         require 'soap.php';
@@ -225,21 +271,21 @@ and open the template in the editor.
         // execute when you are the JOINED user
         if (strcmp($isJoin, "1") == 0) {
             
-            $xml_array['uid'] = $_SESSION['uid'];
+            $xml_array['uid'] = $_GET['uid'];
             $xml_array['gid'] = $_GET['gid'];
             
             $r = $proxy->joinGame($xml_array);
             $join = $r->return;
             if (strcmp($join, "1") == 0) {
-                echo "<p>You have successfully joined in!</p>";
+                echo "<p id='show'>You have successfully joined in!</p>";
             } else if (strcmp($join, "0") == 0) {
-                echo "<p>Join in failed!!!</p>";
+                echo "<p id='show'>Join in failed!!!</p>";
             }
             
         } else {
             
             // do nothing here
-            echo "<p>You are the creator of the game!</p>";
+            echo "<p id='show'>You are the creator of the game!</p>";
         }
         ?>
     </body>

@@ -4,6 +4,8 @@
 To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
+
+    @author:    Naichuan Zhang
 -->
 <html>
     <head>
@@ -13,8 +15,24 @@ and open the template in the editor.
         <script type="text/javascript" src="js/main.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script>
+            <?php 
+            echo "var uid = '".$_GET['uid']."';";
+            echo "var username = '".$_GET['username']."';";
+            ?>
             // update the open games list
             $(document).ready(function() {
+                $.post(
+                    "get_open_games.php",
+                    {uid: uid, username: username},
+                    function(data, status) {
+                        $("#OpenGamesList").append(data);
+                    }
+                );
+            });
+            
+            function refresh() {
+                $("#OpenGamesList").hide();
+                
                 $.post(
                     "get_open_games.php",
                     {},
@@ -22,7 +40,7 @@ and open the template in the editor.
                         $("#OpenGamesList").append(data);
                     }
                 );
-            });
+            }
         </script>
     </head>
     <body>
@@ -30,7 +48,9 @@ and open the template in the editor.
             <input type="submit" id="newGameButton" class="btn" name="newGameButton" value="New Game">
             <input type="submit" id="scoreSystemButton" class="btn" name="scoreSystemButton" value="Score System">
             <input type="submit" id="leaderBoardButton" class="btn" name="leaderBoardButton" value="Leader Board">
+            <input type="submit" id="refreshButton" class="btn" name="refreshButton" value="Refresh" onclick="refresh()">
         </form>
+        <br><br><br><br><br>
         <?php
         require 'soap.php';
         
@@ -64,7 +84,7 @@ and open the template in the editor.
             }
         } else if (isset($_POST['scoreSystemButton'])) {
             
-            header("Location:score_system.php");
+            header("Location:score_system.php?uid=$_GET[uid]&username=$_GET[username]");
         } else if (isset($_POST['leaderBoardButton'])) {
             
             header("Location:leader_board.php");

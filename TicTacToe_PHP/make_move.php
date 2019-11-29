@@ -1,4 +1,7 @@
 <?php
+    /** 
+    *    Author     : Naichuan Zhang
+    */
     session_start();
     require 'soap.php';
     
